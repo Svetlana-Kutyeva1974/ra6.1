@@ -12,7 +12,7 @@ export default class Clock extends Component {
     this.onDelete = props.onDelete;
     this.state = {
       timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss'),
-      canvas: this.displayCanvas(), 
+      canvas: this.displayClock(), 
     };
   }
 
