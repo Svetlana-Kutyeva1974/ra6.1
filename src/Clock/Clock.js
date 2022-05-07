@@ -12,136 +12,70 @@ export default class Clock extends Component {
     this.onDelete = props.onDelete;
     this.state = {
       timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss'),
+     // canvas: this.displayCanvas()
     };
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000)
+    this.interval = setInterval(() => this.tick(), 1000);
+    this.canvasinterval = setInterval(() => this.displayClock(), 1000)
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    clearInterval(this.canvasinterval);
   }
 
   tick() {
     this.setState({timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss')});
+    //this.setState({timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss'), canvas: this.displayCanvas()});
+    // this.displayCanvas();
   }
 
-  displayCanvas(){
-      var canvasHTML = document.getElementById('myCanvas');
-      var contextHTML = canvasHTML.getContext('2d');
-      contextHTML.strokeRect(0,0,canvasHTML.width, canvasHTML.height);
-    
-      //Расчет координат центра и радиуса часов
-      var radiusClock = canvasHTML.width/2 - 10;
-      var xCenterClock = canvasHTML.width/2;
-      var yCenterClock = canvasHTML.height/2;
-    
-      //Очистка экрана. 
-      contextHTML.fillStyle = "#ffffff";
-      contextHTML.fillRect(0,0,canvasHTML.width,canvasHTML.height);
-    
-      //Рисуем контур часов
-      contextHTML.strokeStyle =  "#000000";
-      contextHTML.lineWidth = 1;
-      contextHTML.beginPath();
-      contextHTML.arc(xCenterClock, yCenterClock, radiusClock, 0, 2*Math.PI, true);
-      contextHTML.moveTo(xCenterClock, yCenterClock);
-      contextHTML.stroke();
-      contextHTML.closePath();
-    
-      //Рисуем рисочки часов
-      var radiusNum = radiusClock - 10; //Радиус расположения рисочек	
-      var radiusPoint;
-      for(var tm = 0; tm < 60; tm++){
-      contextHTML.beginPath();
-      if(tm % 5 === 0){radiusPoint = 5;}else{radiusPoint = 2;} //для выделения часовых рисочек
-      var xPointM = xCenterClock + radiusNum * Math.cos(-6*tm*(Math.PI/180) + Math.PI/2);
-      var yPointM = yCenterClock - radiusNum * Math.sin(-6*tm*(Math.PI/180) + Math.PI/2);
-      contextHTML.arc(xPointM, yPointM, radiusPoint, 0, 2*Math.PI, true);
-      contextHTML.stroke();
-      contextHTML.closePath();
-      } 
-      
-    
-      //Оцифровка циферблата часов
-      for(var th = 1; th <= 12; th++){
-    contextHTML.beginPath();
-    contextHTML.font = 'bold 25px sans-serif';
-    var xText = xCenterClock + (radiusNum - 30) * Math.cos(-30*th*(Math.PI/180) + Math.PI/2);
-    var yText = yCenterClock - (radiusNum - 30) * Math.sin(-30*th*(Math.PI/180) + Math.PI/2);
-    if(th <= 9){
-      contextHTML.strokeText(th, xText - 5 , yText + 10);
-    }else{
-      contextHTML.strokeText(th, xText - 15 , yText + 10);
-    }
-         contextHTML.stroke();
-    contextHTML.closePath();	
-      }
-  
-    
-      //Рисуем стрелки
-      var lengthSeconds = radiusNum - 10;
-      var lengthMinutes = radiusNum - 15;
-      var lengthHour = lengthMinutes / 1.5;
-      var d = new Date();                //Получаем экземпляр даты
-      var t_sec = 6*d.getSeconds();                           //Определяем угол для секунд
-      var t_min = 6*(d.getMinutes() + (1/60)*d.getSeconds()); //Определяем угол для минут
-      var t_hour = 30*(d.getHours() + (1/60)*d.getMinutes()); //Определяем угол для часов
-    
-      //Рисуем секунды
-      contextHTML.beginPath();
-      contextHTML.strokeStyle =  "#FF0000";
-      contextHTML.moveTo(xCenterClock, yCenterClock);
-      contextHTML.lineTo(xCenterClock + lengthSeconds*Math.cos(Math.PI/2 - t_sec*(Math.PI/180)),
-          yCenterClock - lengthSeconds*Math.sin(Math.PI/2 - t_sec*(Math.PI/180)));
-      contextHTML.stroke();
-      contextHTML.closePath();
-  
-      //Рисуем минуты
-      contextHTML.beginPath();
-      contextHTML.strokeStyle =  "#000000";
-      contextHTML.lineWidth = 3;
-      contextHTML.moveTo(xCenterClock, yCenterClock);
-      contextHTML.lineTo(xCenterClock + lengthMinutes*Math.cos(Math.PI/2 - t_min*(Math.PI/180)),
-           yCenterClock - lengthMinutes*Math.sin(Math.PI/2 - t_min*(Math.PI/180)));
-      contextHTML.stroke();
-      contextHTML.closePath();
-  
-      //Рисуем часы
-      contextHTML.beginPath();
-      contextHTML.lineWidth = 5;
-      contextHTML.moveTo(xCenterClock, yCenterClock);
-      contextHTML.lineTo(xCenterClock + lengthHour*Math.cos(Math.PI/2 - t_hour*(Math.PI/180)),
-           yCenterClock - lengthHour*Math.sin(Math.PI/2 - t_hour*(Math.PI/180)));
-      contextHTML.stroke();
-      contextHTML.closePath();	
-    
-      //Рисуем центр часов
-      contextHTML.beginPath();
-      contextHTML.strokeStyle =  "#000000";
-      contextHTML.fillStyle = "#ffffff";
-      contextHTML.lineWidth = 3;
-      contextHTML.arc(xCenterClock, yCenterClock, 5, 0, 2*Math.PI, true);
-      contextHTML.stroke();
-      contextHTML.fill();
-      contextHTML.closePath();
-      
-      return;
-  };
+  displayClock(){
 
-  /*var d = new Date();
-	    document.getElementById("clock").innerHTML = d.toLocaleTimeString();
-            displayCanvas();
-*/
+    const deg = 6;
+    const hr = document.querySelector('#hr');
+    const sc = document.querySelector('#sc');
+    const mn = document.querySelector('#mn');
+
+    //setInterval(() => {
+    //let day = new Date();
+    let day = new Date(moment().utcOffset(this.timeZone));
+    // day=  moment().utcOffset(this.timeZone).format('HH:mm:ss');
+    //day =  Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(),
+    //day.getUTCHours(), day.getUTCMinutes(), day.getUTCSeconds());
+
+    let hh = day.getHours() * 30;
+    let mm = day.getMinutes() * deg;
+    let ss = day.getSeconds() * deg;
+
+    hr.style.transform = `rotateZ(${(hh) + (mm/12)}deg)`;
+    mn.style.transform = `rotateZ(${mm}deg)`;
+    sc.style.transform = `rotateZ(${ss}deg)`;
+    //})
+  }
+    
+
   render() {
     return (
       <div>
         <p>{this.name}</p>
         <div id='clock' className='clock'>
           <p>{this.state.timeZone}</p>
+
+          <div className="hour">
+            <div className="hr" id="hr"></div>
+          </div>
+          <div className="min">
+            <div className="mn" id="mn"></div>
+          </div>
+          <div className="sec">
+            <div className="sc" id="sc"></div>
+          </div>
+
           <button className='btn-del' onClick={() => this.onDelete(this.id)}>✘</button>
-          <canvas height='480' width='480' id='myCanvas'></canvas>
+          
         </div>
       </div>
     )
@@ -152,3 +86,5 @@ Clock.propTypes = {
   time: PropTypes.object,
   onDelete: PropTypes.func
 }
+
+//{this.displayCanvas()}  <canvas height='480' width='480' id='myCanvas'></canvas>
