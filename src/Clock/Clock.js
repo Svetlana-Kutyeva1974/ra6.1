@@ -41,7 +41,7 @@ export default class Clock extends Component {
 
     //setInterval(() => {
     //let day = new Date();
-    let day = new Date(moment().utcOffset(this.timeZone));
+    let day = new Date(moment().utcOffset(this.state.timeZone));
     // day=  moment().utcOffset(this.timeZone).format('HH:mm:ss');
     //day =  Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(),
     //day.getUTCHours(), day.getUTCMinutes(), day.getUTCSeconds());
