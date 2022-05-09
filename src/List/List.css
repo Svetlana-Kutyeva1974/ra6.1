@@ -43,6 +43,7 @@ input {
 .clock-list {
   display: flex;
   flex-wrap: wrap;
+  border-radius: 50%;
 }
 
 .clock {
@@ -65,7 +66,6 @@ input {
   transition: .2s;
   background-color: #fff;
   cursor: pointer;
-  color: red;
   font-size: 17px;
 }
 

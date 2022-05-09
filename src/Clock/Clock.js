@@ -12,48 +12,22 @@ export default class Clock extends Component {
     this.onDelete = props.onDelete;
     this.state = {
       timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss'),
-      canvas: this.displayClock(), 
     };
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.tick(), 1000);
-    this.canvasinterval = setInterval(() => this.displayClock(), 1000)
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
-    clearInterval(this.canvasinterval);
   }
 
   tick() {
-    //this.setState({timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss')});
-    this.setState({timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss'), canvas: this.displayClock()});
-    // this.displayCanvas();
-  }
-
-  displayClock(){
-
-    const deg = 6;
-    const hr = document.querySelector('#hr');
-    const sc = document.querySelector('#sc');
-    const mn = document.querySelector('#mn');
-
-    //setInterval(() => {
-    //let day = new Date();
-    let day = new Date(moment().utcOffset(this.state.timeZone));
-    // day=  moment().utcOffset(this.timeZone).format('HH:mm:ss');
-    //day =  Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(),
-    //day.getUTCHours(), day.getUTCMinutes(), day.getUTCSeconds());
-
-    let hh = day.getHours() * 30;
-    let mm = day.getMinutes() * deg;
-    let ss = day.getSeconds() * deg;
-
-    hr.style.transform = `rotateZ(${(hh) + (mm/12)}deg)`;
-    mn.style.transform = `rotateZ(${mm}deg)`;
-    sc.style.transform = `rotateZ(${ss}deg)`;
-    //})
+    console.log('this.timex', this.timeZone,this.state.timeZone,
+     this.state.timeZone.split(':')[0], this.state.timeZone.split(':')[1],
+     this.state.timeZone.split(':')[2]);
+    this.setState({timeZone: moment().utcOffset(this.timeZone).format('HH:mm:ss')});
   }
     
 
@@ -61,21 +35,18 @@ export default class Clock extends Component {
     return (
       <div>
         <p>{this.name}</p>
+        <p>{this.state.timeZone}</p>
         <div id='clock' className='clock'>
-          <p>{this.state.timeZone}</p>
-
           <div className="hour">
-            <div className="hr" id="hr"></div>
+            <div className="hr" id="hr" style={{transform : `rotateZ(${(this.state.timeZone.split(':'))[0]*30 + ((this.state.timeZone.split(':'))[1]*6/12)}deg)`}}></div>
           </div>
           <div className="min">
-            <div className="mn" id="mn"></div>
+            <div className="mn" id="mn" style={{transform : `rotateZ(${(this.state.timeZone.split(':'))[1]*6}deg)`}}></div>
           </div>
           <div className="sec">
-            <div className="sc" id="sc"></div>
+            <div className="sc" id="sc" style={{transform : `rotateZ(${(this.state.timeZone.split(':'))[2]*6}deg)`}}></div>
           </div>
-
-          <button className='btn-del' onClick={() => this.onDelete(this.id)}>✘</button>
-          
+          <button className='btn-del' onClick={() => this.onDelete(this.id)}>&#10006;</button>
         </div>
       </div>
     )
@@ -86,5 +57,3 @@ Clock.propTypes = {
   time: PropTypes.object,
   onDelete: PropTypes.func
 }
-
-//{this.displayCanvas()}  <canvas height='480' width='480' id='myCanvas'></canvas>
